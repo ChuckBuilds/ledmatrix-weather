@@ -4,7 +4,7 @@
   "properties": {
     "enabled": {
       "type": "boolean",
-      "default": true,
+      "default": false,
       "description": "Enable or disable the weather plugin"
     },
     "api_key": {
@@ -13,7 +13,7 @@
       "description": "OpenWeatherMap API key (required)"
     },
     "update_interval": {
-      "type": "number",
+      "type": "integer",
       "default": 1800,
       "minimum": 300,
       "description": "Update interval in seconds (minimum 5 minutes to respect API limits)"
@@ -26,7 +26,7 @@
     },
     "display_format": {
       "type": "string",
-      "default": "{temp}°F\\n{condition}",
+      "default": "{temp}°F\n{condition}",
       "description": "Display format for current weather (supports {temp}, {condition}, {humidity}, {wind})"
     },
     "location": {
