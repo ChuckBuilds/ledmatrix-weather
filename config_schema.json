@@ -14,31 +14,23 @@
       "description": "OpenWeatherMap API key (required - get one at https://openweathermap.org/api)",
       "title": "API Key"
     },
-    "location": {
-      "type": "object",
-      "title": "Location",
-      "description": "Location for weather data",
-      "properties": {
-        "city": {
-          "type": "string",
-          "default": "Dallas",
-          "description": "City name",
-          "title": "City"
-        },
-        "state": {
-          "type": "string",
-          "default": "Texas",
-          "description": "State/province name (optional but recommended for US cities)",
-          "title": "State/Province"
-        },
-        "country": {
-          "type": "string",
-          "default": "US",
-          "description": "Country code (e.g., US, GB, CA, FR)",
-          "title": "Country Code"
-        }
-      },
-      "required": ["city", "country"]
+    "location_city": {
+      "type": "string",
+      "default": "Dallas",
+      "description": "City name for weather data",
+      "title": "City"
+    },
+    "location_state": {
+      "type": "string",
+      "default": "Texas",
+      "description": "State or province name (optional but recommended for US cities)",
+      "title": "State/Province"
+    },
+    "location_country": {
+      "type": "string",
+      "default": "US",
+      "description": "Country code (e.g., US, GB, CA, FR)",
+      "title": "Country Code"
     },
     "units": {
       "type": "string",
@@ -87,7 +79,7 @@
       "title": "Display Duration (seconds)"
     }
   },
-  "required": ["enabled", "api_key", "location"],
+  "required": ["enabled", "api_key", "location_city", "location_country"],
   "additionalProperties": false
 }
 

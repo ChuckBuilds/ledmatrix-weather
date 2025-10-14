@@ -52,16 +52,21 @@ class WeatherPlugin(BasePlugin):
         
         # Weather configuration
         self.api_key = config.get('api_key', 'YOUR_OPENWEATHERMAP_API_KEY')
-        self.location = config.get('location', {})
+        
+        # Location
+        self.location = {
+            'city': config.get('location_city', 'Dallas'),
+            'state': config.get('location_state', 'Texas'),
+            'country': config.get('location_country', 'US')
+        }
+        
         self.units = config.get('units', 'imperial')
         self.update_interval = config.get('update_interval', 1800)
         
-        # Display modes - support both old nested format and new flat format
-        display_modes_config = config.get('display_modes', {})
-        # Check for new flat format first, fall back to nested format for backwards compatibility
-        self.show_current = config.get('show_current_weather', display_modes_config.get('weather', True))
-        self.show_hourly = config.get('show_hourly_forecast', display_modes_config.get('hourly_forecast', True))
-        self.show_daily = config.get('show_daily_forecast', display_modes_config.get('daily_forecast', True))
+        # Display modes
+        self.show_current = config.get('show_current_weather', True)
+        self.show_hourly = config.get('show_hourly_forecast', True)
+        self.show_daily = config.get('show_daily_forecast', True)
         
         # Data storage
         self.weather_data = None
