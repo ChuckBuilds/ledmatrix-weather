@@ -5,78 +5,97 @@
     "enabled": {
       "type": "boolean",
       "default": false,
-      "description": "Enable or disable the weather plugin"
+      "description": "Enable or disable the weather plugin",
+      "title": "Enable Weather Plugin"
     },
     "api_key": {
       "type": "string",
       "default": "YOUR_OPENWEATHERMAP_API_KEY",
-      "description": "OpenWeatherMap API key (required)"
+      "description": "OpenWeatherMap API key (required - get one at https://openweathermap.org/api)",
+      "title": "API Key"
     },
-    "update_interval": {
-      "type": "integer",
-      "default": 1800,
-      "minimum": 300,
-      "description": "Update interval in seconds (minimum 5 minutes to respect API limits)"
+    "location": {
+      "type": "object",
+      "title": "Location",
+      "description": "Location for weather data",
+      "properties": {
+        "city": {
+          "type": "string",
+          "default": "Dallas",
+          "description": "City name",
+          "title": "City"
+        },
+        "state": {
+          "type": "string",
+          "default": "Texas",
+          "description": "State/province name (optional but recommended for US cities)",
+          "title": "State/Province"
+        },
+        "country": {
+          "type": "string",
+          "default": "US",
+          "description": "Country code (e.g., US, GB, CA, FR)",
+          "title": "Country Code"
+        }
+      },
+      "required": ["city", "country"]
     },
     "units": {
       "type": "string",
       "enum": ["imperial", "metric"],
       "default": "imperial",
-      "description": "Temperature units (imperial = Fahrenheit, metric = Celsius)"
+      "description": "Temperature units (imperial = Fahrenheit, metric = Celsius)",
+      "title": "Temperature Units"
+    },
+    "update_interval": {
+      "type": "integer",
+      "default": 1800,
+      "minimum": 300,
+      "description": "How often to fetch new weather data in seconds (minimum 300 = 5 minutes to respect API rate limits)",
+      "title": "Update Interval (seconds)"
     },
     "display_format": {
       "type": "string",
       "default": "{temp}°F\n{condition}",
-      "description": "Display format for current weather (supports {temp}, {condition}, {humidity}, {wind})"
-    },
-    "location": {
-      "type": "object",
-      "properties": {
-        "city": {
-          "type": "string",
-          "default": "Dallas",
-          "description": "City name"
-        },
-        "state": {
-          "type": "string",
-          "default": "Texas",
-          "description": "State/province name"
-        },
-        "country": {
-          "type": "string",
-          "default": "US",
-          "description": "Country code (e.g., US, GB, CA)"
-        }
-      },
-      "required": ["city", "country"]
+      "description": "Display format for current weather. Supports: {temp}, {condition}, {humidity}, {wind}",
+      "title": "Display Format"
     },
     "display_modes": {
       "type": "object",
+      "title": "Display Modes",
+      "description": "Select which weather displays to show",
       "properties": {
         "weather": {
           "type": "boolean",
           "default": true,
-          "description": "Show current weather conditions"
+          "description": "Show current weather conditions with temperature, humidity, UV index, and wind",
+          "title": "Current Weather"
         },
         "hourly_forecast": {
           "type": "boolean",
           "default": true,
-          "description": "Show hourly forecast"
+          "description": "Show hourly forecast for the next 24 hours",
+          "title": "Hourly Forecast"
         },
         "daily_forecast": {
           "type": "boolean",
           "default": true,
-          "description": "Show daily forecast"
+          "description": "Show daily forecast for the next 3-7 days",
+          "title": "Daily Forecast"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "display_duration": {
-      "type": "number",
+      "type": "integer",
       "default": 30,
       "minimum": 5,
-      "description": "How long to display each weather mode in seconds"
+      "maximum": 300,
+      "description": "How long to display each weather mode in seconds",
+      "title": "Display Duration (seconds)"
     }
   },
-  "required": ["enabled", "api_key", "location"]
+  "required": ["enabled", "api_key", "location"],
+  "additionalProperties": false
 }
 
