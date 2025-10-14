@@ -60,31 +60,23 @@
       "description": "Display format for current weather. Supports: {temp}, {condition}, {humidity}, {wind}",
       "title": "Display Format"
     },
-    "display_modes": {
-      "type": "object",
-      "title": "Display Modes",
-      "description": "Select which weather displays to show",
-      "properties": {
-        "weather": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show current weather conditions with temperature, humidity, UV index, and wind",
-          "title": "Current Weather"
-        },
-        "hourly_forecast": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show hourly forecast for the next 24 hours",
-          "title": "Hourly Forecast"
-        },
-        "daily_forecast": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show daily forecast for the next 3-7 days",
-          "title": "Daily Forecast"
-        }
-      },
-      "additionalProperties": false
+    "show_current_weather": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show current weather conditions with temperature, humidity, UV index, and wind",
+      "title": "Show Current Weather"
+    },
+    "show_hourly_forecast": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show hourly forecast for the next 24 hours",
+      "title": "Show Hourly Forecast"
+    },
+    "show_daily_forecast": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show daily forecast for the next 3-7 days",
+      "title": "Show Daily Forecast"
     },
     "display_duration": {
       "type": "integer",
