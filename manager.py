@@ -65,7 +65,10 @@ class WeatherPlugin(BasePlugin):
         
         # Handle update_interval - ensure it's an int
         update_interval = config.get('update_interval', 1800)
-        self.update_interval = int(update_interval) if update_interval else 1800
+        try:
+            self.update_interval = int(update_interval)
+        except (ValueError, TypeError):
+            self.update_interval = 1800
         
         # Display modes - read from flat boolean fields
         # These are the fields defined in config_schema.json for the web interface
