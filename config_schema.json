@@ -12,7 +12,8 @@
       "type": "string",
       "default": "YOUR_OPENWEATHERMAP_API_KEY",
       "description": "OpenWeatherMap API key (required - get one at https://openweathermap.org/api)",
-      "title": "API Key"
+      "title": "API Key",
+      "x-secret": true
     },
     "location_city": {
       "type": "string",
