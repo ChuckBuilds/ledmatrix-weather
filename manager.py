@@ -446,8 +446,8 @@ class WeatherPlugin(BasePlugin):
             'current_humidity': self.weather_data.get('main', {}).get('humidity') if self.weather_data else None,
             'current_description': self.weather_data.get('weather', [{}])[0].get('description', '') if self.weather_data else '',
             'forecast_available': bool(self.forecast_data),
-            'daily_forecast_count': len(self.daily_forecast) if hasattr(self, 'daily_forecast') else 0,
-            'hourly_forecast_count': len(self.hourly_forecast) if hasattr(self, 'hourly_forecast') else 0
+            'daily_forecast_count': len(self.daily_forecast) if hasattr(self, 'daily_forecast') and self.daily_forecast is not None else 0,
+            'hourly_forecast_count': len(self.hourly_forecast) if hasattr(self, 'hourly_forecast') and self.hourly_forecast is not None else 0
         })
         return info
 
