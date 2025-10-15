@@ -53,16 +53,13 @@ class WeatherPlugin(BasePlugin):
         # Weather configuration
         self.api_key = config.get('api_key', 'YOUR_OPENWEATHERMAP_API_KEY')
         
-        # Handle location - support both nested dict format and flat format
-        location = config.get('location', {})
-        if not isinstance(location, dict) or not location:
-            # Use flat format from config schema (location_city, location_state, location_country)
-            location = {
-                'city': config.get('location_city', 'Dallas'),
-                'state': config.get('location_state', 'Texas'),
-                'country': config.get('location_country', 'US')
-            }
-        self.location = location
+        # Location - read from flat format (location_city, location_state, location_country)
+        # These are the fields defined in config_schema.json for the web interface
+        self.location = {
+            'city': config.get('location_city', 'Dallas'),
+            'state': config.get('location_state', 'Texas'),
+            'country': config.get('location_country', 'US')
+        }
         
         self.units = config.get('units', 'imperial')
         
@@ -70,16 +67,11 @@ class WeatherPlugin(BasePlugin):
         update_interval = config.get('update_interval', 1800)
         self.update_interval = int(update_interval) if update_interval else 1800
         
-        # Display modes - support both old nested format and new flat format
-        # Ensure display_modes_config is a dict, not empty string
-        display_modes_config = config.get('display_modes', {})
-        if not isinstance(display_modes_config, dict):
-            display_modes_config = {}
-        
-        # Check for new flat format first, fall back to nested format for backwards compatibility
-        self.show_current = config.get('show_current_weather', display_modes_config.get('weather', True))
-        self.show_hourly = config.get('show_hourly_forecast', display_modes_config.get('hourly_forecast', True))
-        self.show_daily = config.get('show_daily_forecast', display_modes_config.get('daily_forecast', True))
+        # Display modes - read from flat boolean fields
+        # These are the fields defined in config_schema.json for the web interface
+        self.show_current = config.get('show_current_weather', True)
+        self.show_hourly = config.get('show_hourly_forecast', True)
+        self.show_daily = config.get('show_daily_forecast', True)
         
         # Data storage
         self.weather_data = None
