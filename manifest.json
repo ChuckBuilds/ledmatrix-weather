@@ -1,7 +1,7 @@
 {
   "id": "weather",
   "name": "Weather Display",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "ChuckBuilds",
   "description": "Comprehensive weather display with current conditions, hourly forecast, daily forecast, and UV index. Powered by OpenWeatherMap API with beautiful weather icons.",
   "homepage": "https://github.com/ChuckBuilds/ledmatrix-plugins",

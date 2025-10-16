@@ -293,16 +293,20 @@ class WeatherPlugin(BasePlugin):
                     'pop': day_data.get('pop', 0) * 100
                 })
     
-    def display(self, display_mode: str = None) -> None:
+    def display(self, display_mode: str = None, force_clear: bool = False) -> None:
         """
         Display weather information.
         
         Args:
             display_mode: One of 'weather', 'hourly_forecast', or 'daily_forecast'
+            force_clear: If True, clear the display before rendering (ignored, kept for compatibility)
         """
         if not self.weather_data:
             self._display_no_data()
             return
+        
+        # Note: force_clear is handled by display_manager, not needed here
+        # This parameter is kept for compatibility with BasePlugin interface
         
         # Determine which mode to display
         if display_mode == 'hourly_forecast' and self.show_hourly:
