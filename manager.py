@@ -717,6 +717,18 @@ class WeatherPlugin(BasePlugin):
         except Exception as e:
             self.logger.error(f"Error displaying daily forecast: {e}")
     
+    def display_weather(self, force_clear: bool = False) -> None:
+        """Display current weather (compatibility method for display controller)."""
+        self.display('weather', force_clear)
+    
+    def display_hourly_forecast(self, force_clear: bool = False) -> None:
+        """Display hourly forecast (compatibility method for display controller)."""
+        self.display('hourly_forecast', force_clear)
+    
+    def display_daily_forecast(self, force_clear: bool = False) -> None:
+        """Display daily forecast (compatibility method for display controller)."""
+        self.display('daily_forecast', force_clear)
+
     def get_info(self) -> Dict[str, Any]:
         """Return plugin info for web UI."""
         info = super().get_info()
