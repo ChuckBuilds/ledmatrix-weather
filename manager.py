@@ -421,8 +421,8 @@ class WeatherPlugin(BasePlugin):
             icon_code = self.weather_data['weather'][0]['icon']
             humidity = self.weather_data['main']['humidity']
             pressure = self.weather_data['main']['pressure']
-            wind_speed = self.weather_data['wind']['speed']
-            wind_deg = self.weather_data['wind']['deg']
+            wind_speed = self.weather_data['wind'].get('speed', 0)
+            wind_deg = self.weather_data['wind'].get('deg', 0)  # Wind direction not always provided
             uv_index = self.weather_data['main'].get('uvi', 0)
             
             # Get daily high/low from the first day of forecast
