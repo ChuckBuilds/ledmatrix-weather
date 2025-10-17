@@ -298,7 +298,7 @@ class WeatherPlugin(BasePlugin):
         Display weather information.
         
         Args:
-            display_mode: One of 'weather', 'hourly_forecast', or 'daily_forecast'
+            display_mode: One of 'weather', 'hourly_forecast', 'daily_forecast', or display controller modes
             force_clear: If True, clear the display before rendering (ignored, kept for compatibility)
         """
         if not self.weather_data:
@@ -307,6 +307,17 @@ class WeatherPlugin(BasePlugin):
         
         # Note: force_clear is handled by display_manager, not needed here
         # This parameter is kept for compatibility with BasePlugin interface
+        
+        # Map display controller modes to internal plugin modes
+        mode_mapping = {
+            'weather_current': 'weather',
+            'weather_hourly': 'hourly_forecast',
+            'weather_daily': 'daily_forecast'
+        }
+        
+        # Convert display controller mode to plugin mode if needed
+        if display_mode in mode_mapping:
+            display_mode = mode_mapping[display_mode]
         
         # Determine which mode to display
         if display_mode == 'hourly_forecast' and self.show_hourly:
@@ -335,7 +346,7 @@ class WeatherPlugin(BasePlugin):
         self.display_manager.update_display()
     
     def _display_current_weather(self) -> None:
-        """Display current weather conditions."""
+        """Display current weather conditions with daily high/low."""
         img = Image.new('RGB', (self.display_manager.matrix.width, self.display_manager.matrix.height), (0, 0, 0))
         draw = ImageDraw.Draw(img)
         
@@ -344,14 +355,22 @@ class WeatherPlugin(BasePlugin):
         try:
             font_large = ImageFont.truetype('assets/fonts/PressStart2P-Regular.ttf', 12)
             font_small = ImageFont.truetype('assets/fonts/4x6-font.ttf', 8)
+            font_tiny = ImageFont.truetype('assets/fonts/4x6-font.ttf', 6)
         except:
             font_large = ImageFont.load_default()
             font_small = ImageFont.load_default()
+            font_tiny = ImageFont.load_default()
         
         # Get weather info
         temp = int(self.weather_data['main']['temp'])
         condition = self.weather_data['weather'][0]['main']
         humidity = self.weather_data['main']['humidity']
+        pressure = self.weather_data['main']['pressure']
+        wind_speed = self.weather_data['wind']['speed']
+        
+        # Get daily high/low from the first day of forecast
+        temp_high = int(self.weather_data['main']['temp_max'])
+        temp_low = int(self.weather_data['main']['temp_min'])
         
         # Draw temperature (large, centered)
         temp_str = f"{temp}°"
@@ -366,9 +385,31 @@ class WeatherPlugin(BasePlugin):
         x_pos = (self.display_manager.matrix.width - cond_width) // 2
         draw.text((x_pos, 18), condition, font=font_small, fill=self.COLORS['highlight'])
         
-        # Draw humidity (small, bottom right)
-        humidity_str = f"H:{humidity}%"
-        draw.text((2, self.display_manager.matrix.height - 8), humidity_str, font=font_small, fill=self.COLORS['dim'])
+        # Draw daily high/low (centered below condition)
+        daily_temp_str = f"{temp_low}° / {temp_high}°"
+        bbox = draw.textbbox((0, 0), daily_temp_str, font=font_small)
+        daily_width = bbox[2] - bbox[0]
+        x_pos = (self.display_manager.matrix.width - daily_width) // 2
+        draw.text((x_pos, 28), daily_temp_str, font=font_small, fill=self.COLORS['text'])
+        
+        # Draw additional weather info in bottom row
+        # Pressure (left)
+        pressure_str = f"P{pressure:.2f}in"
+        draw.text((2, self.display_manager.matrix.height - 8), pressure_str, font=font_tiny, fill=self.COLORS['dim'])
+        
+        # Humidity (center)
+        humidity_str = f"H{humidity}%"
+        bbox = draw.textbbox((0, 0), humidity_str, font=font_tiny)
+        humidity_width = bbox[2] - bbox[0]
+        x_pos = (self.display_manager.matrix.width - humidity_width) // 2
+        draw.text((x_pos, self.display_manager.matrix.height - 8), humidity_str, font=font_tiny, fill=self.COLORS['dim'])
+        
+        # Wind (right)
+        wind_str = f"W{int(wind_speed)}"
+        bbox = draw.textbbox((0, 0), wind_str, font=font_tiny)
+        wind_width = bbox[2] - bbox[0]
+        x_pos = self.display_manager.matrix.width - wind_width - 2
+        draw.text((x_pos, self.display_manager.matrix.height - 8), wind_str, font=font_tiny, fill=self.COLORS['dim'])
         
         self.display_manager.image = img.copy()
         self.display_manager.update_display()
