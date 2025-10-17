@@ -417,7 +417,9 @@ class WeatherPlugin(BasePlugin):
             # Check if state has changed
             current_state = self._get_weather_state()
             if current_state == self.last_weather_state:
-                return  # No need to redraw if nothing changed
+                # No need to redraw, but still update display for web preview snapshot
+                self.display_manager.update_display()
+                return
 
             # Clear the display
             self.display_manager.clear()
@@ -578,6 +580,8 @@ class WeatherPlugin(BasePlugin):
             # Check if state has changed
             current_state = self._get_hourly_state()
             if current_state == self.last_hourly_state:
+                # No need to redraw, but still update display for web preview snapshot
+                self.display_manager.update_display()
                 return
             
             # Clear the display
@@ -644,6 +648,8 @@ class WeatherPlugin(BasePlugin):
             # Check if state has changed
             current_state = self._get_daily_state()
             if current_state == self.last_daily_state:
+                # No need to redraw, but still update display for web preview snapshot
+                self.display_manager.update_display()
                 return
             
             # Clear the display
