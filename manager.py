@@ -114,6 +114,7 @@ class WeatherPlugin(BasePlugin):
         self.last_weather_state = None
         self.last_hourly_state = None
         self.last_daily_state = None
+        self.current_display_mode = None  # Track current mode to detect switches
         
         # Layout constants
         self.PADDING = 1
@@ -373,6 +374,16 @@ class WeatherPlugin(BasePlugin):
         # Convert display controller mode to plugin mode if needed
         if display_mode in mode_mapping:
             display_mode = mode_mapping[display_mode]
+        
+        # Check if mode has changed - if so, reset state cache to force redraw
+        if display_mode != self.current_display_mode:
+            if display_mode == 'hourly_forecast':
+                self.last_hourly_state = None
+            elif display_mode == 'daily_forecast':
+                self.last_daily_state = None
+            else:
+                self.last_weather_state = None
+            self.current_display_mode = display_mode
         
         # Determine which mode to display
         if display_mode == 'hourly_forecast' and self.show_hourly:
