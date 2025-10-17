@@ -397,7 +397,7 @@ class WeatherPlugin(BasePlugin):
         draw.text((5, 12), "No Weather", font=font, fill=(200, 200, 200))
         draw.text((5, 20), "Data", font=font, fill=(200, 200, 200))
         
-        self.display_manager.image = img.copy()
+        self.display_manager.image = img
         self.display_manager.update_display()
     
     def _display_current_weather(self) -> None:
@@ -497,7 +497,7 @@ class WeatherPlugin(BasePlugin):
             draw.text((wind_x, y_pos), wind_text, font=font, fill=self.COLORS['dim'])
             
             # Update the display
-            self.display_manager.image = img.copy()
+            self.display_manager.image = img
             self.display_manager.update_display()
             self.last_weather_state = current_state
 
@@ -616,7 +616,7 @@ class WeatherPlugin(BasePlugin):
                          fill=self.COLORS['text'])
             
             # Update the display
-            self.display_manager.image = img.copy()
+            self.display_manager.image = img
             self.display_manager.update_display()
             self.last_hourly_state = current_state
 
@@ -685,7 +685,7 @@ class WeatherPlugin(BasePlugin):
                              fill=self.COLORS['text'])
             
             # Update the display
-            self.display_manager.image = img.copy()
+            self.display_manager.image = img
             self.display_manager.update_display()
             self.last_daily_state = current_state
 
