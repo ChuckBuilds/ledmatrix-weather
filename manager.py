@@ -150,7 +150,7 @@ class WeatherPlugin(BasePlugin):
     def _register_fonts(self):
         """Register fonts with the font manager."""
         try:
-            if not hasattr(self.plugin_manager, 'font_manager'):
+            if not hasattr(self.plugin_manager, 'font_manager') or self.plugin_manager.font_manager is None:
                 self.logger.warning("Font manager not available")
                 return
             
@@ -181,7 +181,7 @@ class WeatherPlugin(BasePlugin):
                 color=self.COLORS['dim']
             )
             
-            self.logger.info("Weather plugin fonts registered")
+            self.logger.info("Weather plugin fonts registered successfully")
         except Exception as e:
             self.logger.warning(f"Error registering fonts: {e}")
     
