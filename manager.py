@@ -377,12 +377,16 @@ class WeatherPlugin(BasePlugin):
         
         # Check if mode has changed - if so, reset state cache to force redraw
         if display_mode != self.current_display_mode:
+            self.logger.info(f"Display mode changed from {self.current_display_mode} to {display_mode}")
             if display_mode == 'hourly_forecast':
                 self.last_hourly_state = None
+                self.logger.debug("Reset hourly state cache for mode switch")
             elif display_mode == 'daily_forecast':
                 self.last_daily_state = None
+                self.logger.debug("Reset daily state cache for mode switch")
             else:
                 self.last_weather_state = None
+                self.logger.debug("Reset weather state cache for mode switch")
             self.current_display_mode = display_mode
         
         # Determine which mode to display
@@ -573,13 +577,17 @@ class WeatherPlugin(BasePlugin):
     def _display_hourly_forecast(self) -> None:
         """Display hourly forecast with weather icons."""
         try:
+            self.logger.debug(f"Displaying hourly forecast, data available: {bool(self.hourly_forecast)}")
             if not self.hourly_forecast:
+                self.logger.warning("No hourly forecast data available, showing no data message")
                 self._display_no_data()
                 return
             
             # Check if state has changed
             current_state = self._get_hourly_state()
+            self.logger.debug(f"Hourly state comparison: current={current_state}, last={self.last_hourly_state}")
             if current_state == self.last_hourly_state:
+                self.logger.debug("Hourly state unchanged, skipping redraw but updating display")
                 # No need to redraw, but still update display for web preview snapshot
                 self.display_manager.update_display()
                 return
