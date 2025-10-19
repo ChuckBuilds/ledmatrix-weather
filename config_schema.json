@@ -2,12 +2,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "enabled": {
-      "type": "boolean",
-      "default": false,
-      "description": "Enable or disable the weather plugin",
-      "title": "Enable Weather Plugin"
-    },
     "api_key": {
       "type": "string",
       "default": "YOUR_OPENWEATHERMAP_API_KEY",
@@ -80,7 +74,7 @@
       "title": "Display Duration (seconds)"
     }
   },
-  "required": ["enabled", "api_key", "location_city", "location_country"],
+  "required": ["api_key", "location_city", "location_country"],
   "additionalProperties": false
 }
 
