@@ -577,7 +577,6 @@ class WeatherPlugin(BasePlugin):
     def _display_hourly_forecast(self) -> None:
         """Display hourly forecast with weather icons."""
         try:
-            self.logger.debug(f"Displaying hourly forecast, data available: {bool(self.hourly_forecast)}")
             if not self.hourly_forecast:
                 self.logger.warning("No hourly forecast data available, showing no data message")
                 self._display_no_data()
@@ -585,9 +584,7 @@ class WeatherPlugin(BasePlugin):
             
             # Check if state has changed
             current_state = self._get_hourly_state()
-            self.logger.debug(f"Hourly state comparison: current={current_state}, last={self.last_hourly_state}")
             if current_state == self.last_hourly_state:
-                self.logger.debug("Hourly state unchanged, skipping redraw but updating display")
                 # No need to redraw, but still update display for web preview snapshot
                 self.display_manager.update_display()
                 return
