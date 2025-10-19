@@ -1,36 +1,36 @@
 {
   "id": "weather",
   "name": "Weather Display",
-  "version": "2.0.6",
   "author": "ChuckBuilds",
   "description": "Comprehensive weather display with current conditions, hourly forecast, daily forecast, UV index, wind direction, and weather icons. Features state caching, API counter tracking, and error handling. Powered by OpenWeatherMap API with beautiful weather icons.",
-  "homepage": "https://github.com/ChuckBuilds/ledmatrix-plugins",
-  "entry_point": "manager.py",
-  "class_name": "WeatherPlugin",
   "category": "weather",
-  "tags": ["weather", "forecast", "temperature", "conditions", "openweathermap", "uv-index", "wind", "icons", "caching"],
-  "icon": "fas fa-cloud-sun",
-  "compatible_versions": [">=2.0.0"],
-  "ledmatrix_version": "2.0.0",
-  "requires": {
-    "python": ">=3.9",
-    "display_size": {
-      "min_width": 64,
-      "min_height": 32
-    }
-  },
-  "config_schema": "config_schema.json",
-  "assets": {},
-  "update_interval": 1800,
-  "default_duration": 30,
-  "display_modes": ["weather", "hourly_forecast", "daily_forecast"],
-  "api_requirements": [
+  "tags": [
+    "weather",
+    "forecast",
+    "temperature",
+    "conditions",
+    "openweathermap",
+    "uv-index",
+    "wind",
+    "icons",
+    "caching"
+  ],
+  "display_modes": [
+    "weather",
+    "hourly_forecast",
+    "daily_forecast"
+  ],
+  "download_url_template": "https://github.com/ChuckBuilds/ledmatrix-weather/archive/refs/tags/v{version}.zip",
+  "versions": [
     {
-      "name": "OpenWeatherMap API",
-      "required": true,
-      "description": "API key for weather data from OpenWeatherMap",
-      "url": "https://openweathermap.org/api"
+      "released": "2025-10-19",
+      "version": "2.0.6",
+      "ledmatrix_min": "2.0.0"
     }
-  ]
+  ],
+  "last_updated": "2025-10-19",
+  "stars": 0,
+  "downloads": 0,
+  "verified": true,
+  "screenshot": ""
 }
-
