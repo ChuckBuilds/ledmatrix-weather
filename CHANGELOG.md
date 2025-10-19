@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.8] - 2025-10-19
+
+### Fixed
+- **CRITICAL**: Added missing `class_name` field to manifest
+  - Plugin system now correctly identifies the Python class to load
+  - Fixes "No class_name in manifest" error
+
 ## [2.0.7] - 2025-10-19
 
 ### Removed
