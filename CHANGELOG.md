@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.9] - 2025-11-05
+
+### Fixed
+- **Weather icons not displaying**: Fixed import path for WeatherIcons class
+  - Moved WeatherIcons from `src/old_managers/weather_icons.py` to plugin directory
+  - Plugin now self-contained and no longer depends on old_managers directory
+  - Weather icons now display correctly instead of showing placeholder circles
+
+### Changed
+- **Internal mode cycling**: Implemented internal mode cycling for weather displays
+  - Plugin now cycles through current, hourly, and daily forecast modes automatically
+  - Similar to hockey and football plugins, handles mode rotation internally
+  - Works correctly with display controller's plugin-first dispatch system
+
 ## [2.0.8] - 2025-10-19
 
 ### Fixed

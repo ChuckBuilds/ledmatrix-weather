@@ -25,17 +25,23 @@ from pathlib import Path
 
 from src.plugin_system.base_plugin import BasePlugin
 
-# Import weather icons if available
+# Import weather icons from local module
 try:
-    from src.weather_icons import WeatherIcons
+    # Try relative import first (if module is loaded as package)
+    from .weather_icons import WeatherIcons
 except ImportError:
-    # Fallback if weather icons not available
-    class WeatherIcons:
-        @staticmethod
-        def draw_weather_icon(image, icon_code, x, y, size):
-            # Simple fallback - just draw a circle
-            draw = ImageDraw.Draw(image)
-            draw.ellipse([x, y, x + size, y + size], outline=(255, 255, 255), width=2)
+    try:
+        # Fallback to direct import (plugin dir is in sys.path)
+        import weather_icons
+        WeatherIcons = weather_icons.WeatherIcons
+    except ImportError:
+        # Fallback if weather icons not available
+        class WeatherIcons:
+            @staticmethod
+            def draw_weather_icon(image, icon_code, x, y, size):
+                # Simple fallback - just draw a circle
+                draw = ImageDraw.Draw(image)
+                draw.ellipse([x, y, x + size, y + size], outline=(255, 255, 255), width=2)
 
 # Import API counter function
 try:
@@ -115,6 +121,24 @@ class WeatherPlugin(BasePlugin):
         self.last_hourly_state = None
         self.last_daily_state = None
         self.current_display_mode = None  # Track current mode to detect switches
+        
+        # Internal mode cycling (similar to hockey plugin)
+        # Build list of enabled modes in order
+        self.modes = []
+        if self.show_current:
+            self.modes.append('weather')
+        if self.show_hourly:
+            self.modes.append('hourly_forecast')
+        if self.show_daily:
+            self.modes.append('daily_forecast')
+        
+        # Default to first mode if none enabled
+        if not self.modes:
+            self.modes = ['weather']
+        
+        self.current_mode_index = 0
+        self.last_mode_switch = 0
+        self.display_duration = config.get('display_duration', 30)
         
         # Layout constants
         self.PADDING = 1
@@ -351,10 +375,14 @@ class WeatherPlugin(BasePlugin):
     
     def display(self, display_mode: str = None, force_clear: bool = False) -> None:
         """
-        Display weather information.
+        Display weather information with internal mode cycling.
+        
+        The display controller registers each mode separately (weather, hourly_forecast, daily_forecast)
+        but calls display() without passing the mode name. This plugin handles mode cycling internally
+        similar to the hockey plugin, advancing through enabled modes based on time.
         
         Args:
-            display_mode: One of 'weather', 'hourly_forecast', 'daily_forecast', or display controller modes
+            display_mode: Optional mode name (not currently used, kept for compatibility)
             force_clear: If True, clear the display before rendering (ignored, kept for compatibility)
         """
         if not self.weather_data:
@@ -364,37 +392,44 @@ class WeatherPlugin(BasePlugin):
         # Note: force_clear is handled by display_manager, not needed here
         # This parameter is kept for compatibility with BasePlugin interface
         
-        # Map display controller modes to internal plugin modes
-        mode_mapping = {
-            'weather_current': 'weather',
-            'weather_hourly': 'hourly_forecast',
-            'weather_daily': 'daily_forecast'
-        }
+        current_time = time.time()
         
-        # Convert display controller mode to plugin mode if needed
-        if display_mode in mode_mapping:
-            display_mode = mode_mapping[display_mode]
+        # Handle mode cycling based on display duration
+        if current_time - self.last_mode_switch >= self.display_duration:
+            self.current_mode_index = (self.current_mode_index + 1) % len(self.modes)
+            self.last_mode_switch = current_time
+            force_clear = True
+            
+            current_mode = self.modes[self.current_mode_index]
+            self.logger.info(f"Switching to display mode: {current_mode}")
+        
+        # Get current mode to display
+        current_mode = self.modes[self.current_mode_index]
         
         # Check if mode has changed - if so, reset state cache to force redraw
-        if display_mode != self.current_display_mode:
-            self.logger.info(f"Display mode changed from {self.current_display_mode} to {display_mode}")
-            if display_mode == 'hourly_forecast':
+        if current_mode != self.current_display_mode:
+            self.logger.info(f"Display mode changed from {self.current_display_mode} to {current_mode}")
+            if current_mode == 'hourly_forecast':
                 self.last_hourly_state = None
                 self.logger.debug("Reset hourly state cache for mode switch")
-            elif display_mode == 'daily_forecast':
+            elif current_mode == 'daily_forecast':
                 self.last_daily_state = None
                 self.logger.debug("Reset daily state cache for mode switch")
             else:
                 self.last_weather_state = None
                 self.logger.debug("Reset weather state cache for mode switch")
-            self.current_display_mode = display_mode
+            self.current_display_mode = current_mode
         
-        # Determine which mode to display
-        if display_mode == 'hourly_forecast' and self.show_hourly:
+        # Display the current mode
+        if current_mode == 'hourly_forecast' and self.show_hourly:
             self._display_hourly_forecast()
-        elif display_mode == 'daily_forecast' and self.show_daily:
+        elif current_mode == 'daily_forecast' and self.show_daily:
             self._display_daily_forecast()
+        elif current_mode == 'weather' and self.show_current:
+            self._display_current_weather()
         else:
+            # Fallback: show current weather if mode doesn't match
+            self.logger.warning(f"Mode {current_mode} not available, showing current weather")
             self._display_current_weather()
     
     def _display_no_data(self) -> None:
