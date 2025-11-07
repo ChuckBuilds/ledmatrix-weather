@@ -8,6 +8,7 @@ Maps OpenWeatherMap icon codes to appropriate icon files.
 import os
 import math
 import logging
+from pathlib import Path
 from typing import Union
 from PIL import Image, ImageDraw
 
@@ -15,7 +16,10 @@ logger = logging.getLogger(__name__)
 
 
 class WeatherIcons:
-    ICON_DIR = "assets/weather/"  # Path where PNG icons are stored
+    _PLUGIN_ICON_DIR = Path(__file__).resolve().parent / "assets" / "weather"
+    _ROOT_ICON_DIR = Path(__file__).resolve().parent.parent.parent / "assets" / "weather"
+    ICON_PATHS = [_PLUGIN_ICON_DIR, _ROOT_ICON_DIR]
+    ICON_DIR = str(_PLUGIN_ICON_DIR)  # Maintained for backward compatibility
     DEFAULT_ICON = "not-available.png"
     DEFAULT_SIZE = 64  # Default size, should match icons but can be overridden
 
@@ -50,24 +54,34 @@ class WeatherIcons:
         "wind": "wind.png", # Generic wind if code is not specific enough
     }
 
-    @staticmethod
-    def _get_icon_filename(icon_code: str) -> str:
+    @classmethod
+    def _resolve_icon_path(cls, filename: str) -> Union[Path, None]:
+        """Resolve the full path for an icon by checking known asset directories."""
+        for base_path in cls.ICON_PATHS:
+            if base_path and base_path.exists():
+                candidate = base_path / filename
+                if candidate.exists():
+                    return candidate
+        return None
+
+    @classmethod
+    def _get_icon_filename(cls, icon_code: str) -> str:
         """Maps an OpenWeatherMap icon code (e.g., '01d', '10n') to an icon filename."""
-        filename = WeatherIcons.ICON_MAP.get(icon_code, WeatherIcons.DEFAULT_ICON)
+        filename = cls.ICON_MAP.get(icon_code, cls.DEFAULT_ICON)
         logger.debug(f"Mapping icon code '{icon_code}' to filename: '{filename}'")
 
         # Check if the mapped filename exists, otherwise use default
-        potential_path = os.path.join(WeatherIcons.ICON_DIR, filename)
-        if not os.path.exists(potential_path):
+        potential_path = cls._resolve_icon_path(filename)
+        if not potential_path:
             # If a specific icon was determined but not found, log warning and use default
-            if filename != WeatherIcons.DEFAULT_ICON:
-                logger.warning(f"Mapped icon file '{filename}' not found at '{potential_path}'. Falling back to default.")
-                filename = WeatherIcons.DEFAULT_ICON
+            if filename != cls.DEFAULT_ICON:
+                logger.warning(f"Mapped icon file '{filename}' not found in any icon directory. Falling back to default.")
+                filename = cls.DEFAULT_ICON
             
             # Check if default exists
-            default_path = os.path.join(WeatherIcons.ICON_DIR, WeatherIcons.DEFAULT_ICON)
-            if not os.path.exists(default_path):
-                logger.error(f"Default icon file also not found: {default_path}")
+            default_path = cls._resolve_icon_path(cls.DEFAULT_ICON)
+            if not default_path:
+                logger.error("Default weather icon file not found in any icon directory")
                 # Allow filename to remain DEFAULT_ICON name, load_weather_icon handles FileNotFoundError
 
         return filename
@@ -76,7 +90,12 @@ class WeatherIcons:
     def load_weather_icon(icon_code: str, size: int = DEFAULT_SIZE) -> Union[Image.Image, None]:
         """Loads, converts, and resizes the appropriate weather icon based on the OWM code. Returns None on failure."""
         filename = WeatherIcons._get_icon_filename(icon_code)
-        icon_path = os.path.join(WeatherIcons.ICON_DIR, filename)
+        icon_path_obj = WeatherIcons._resolve_icon_path(filename)
+        if not icon_path_obj:
+            logger.error(f"Unable to resolve path for weather icon '{filename}'")
+            return None
+
+        icon_path = str(icon_path_obj)
 
         try:
             # Open image and ensure it's RGBA for transparency handling
