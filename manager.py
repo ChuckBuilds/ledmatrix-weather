@@ -392,33 +392,35 @@ class WeatherPlugin(BasePlugin):
         # Note: force_clear is handled by display_manager, not needed here
         # This parameter is kept for compatibility with BasePlugin interface
         
-        current_time = time.time()
-        
-        # Handle mode cycling based on display duration
-        if current_time - self.last_mode_switch >= self.display_duration:
-            self.current_mode_index = (self.current_mode_index + 1) % len(self.modes)
-            self.last_mode_switch = current_time
-            force_clear = True
-            
-            current_mode = self.modes[self.current_mode_index]
-            self.logger.info(f"Switching to display mode: {current_mode}")
-        
-        # Get current mode to display
-        current_mode = self.modes[self.current_mode_index]
-        
-        # Check if mode has changed - if so, reset state cache to force redraw
-        if current_mode != self.current_display_mode:
-            self.logger.info(f"Display mode changed from {self.current_display_mode} to {current_mode}")
-            if current_mode == 'hourly_forecast':
-                self.last_hourly_state = None
-                self.logger.debug("Reset hourly state cache for mode switch")
-            elif current_mode == 'daily_forecast':
-                self.last_daily_state = None
-                self.logger.debug("Reset daily state cache for mode switch")
+        current_mode = None
+
+        # If a specific mode is requested (compatibility methods), honor it
+        if display_mode and display_mode in self.modes:
+            try:
+                requested_index = self.modes.index(display_mode)
+            except ValueError:
+                requested_index = None
+
+            if requested_index is not None:
+                current_mode = self.modes[requested_index]
+                if current_mode != self.current_display_mode:
+                    self.current_mode_index = requested_index
+                    self._on_mode_changed(current_mode)
+        else:
+            # Default rotation synchronized with display controller
+            if self.current_display_mode is None:
+                current_mode = self.modes[self.current_mode_index]
+                self._on_mode_changed(current_mode)
+            elif force_clear:
+                self.current_mode_index = (self.current_mode_index + 1) % len(self.modes)
+                current_mode = self.modes[self.current_mode_index]
+                self._on_mode_changed(current_mode)
             else:
-                self.last_weather_state = None
-                self.logger.debug("Reset weather state cache for mode switch")
-            self.current_display_mode = current_mode
+                current_mode = self.modes[self.current_mode_index]
+        
+        # Ensure we have a mode even if none of the above paths triggered a change
+        if current_mode is None:
+            current_mode = self.current_display_mode or self.modes[self.current_mode_index]
         
         # Display the current mode
         if current_mode == 'hourly_forecast' and self.show_hourly:
@@ -431,6 +433,25 @@ class WeatherPlugin(BasePlugin):
             # Fallback: show current weather if mode doesn't match
             self.logger.warning(f"Mode {current_mode} not available, showing current weather")
             self._display_current_weather()
+    
+    def _on_mode_changed(self, new_mode: str) -> None:
+        """Handle logic needed when switching display modes."""
+        if new_mode == self.current_display_mode:
+            return
+
+        self.logger.info(f"Display mode changed from {self.current_display_mode} to {new_mode}")
+        if new_mode == 'hourly_forecast':
+            self.last_hourly_state = None
+            self.logger.debug("Reset hourly state cache for mode switch")
+        elif new_mode == 'daily_forecast':
+            self.last_daily_state = None
+            self.logger.debug("Reset daily state cache for mode switch")
+        else:
+            self.last_weather_state = None
+            self.logger.debug("Reset weather state cache for mode switch")
+
+        self.current_display_mode = new_mode
+        self.last_mode_switch = time.time()
     
     def _display_no_data(self) -> None:
         """Display a message when no weather data is available."""
