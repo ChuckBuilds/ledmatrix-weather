@@ -1,11 +1,66 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Weather Plugin Configuration",
+  "description": "Configuration schema for the Weather plugin - displays current conditions, hourly forecast, and daily forecast",
   "type": "object",
   "properties": {
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable or disable the weather plugin"
+    },
+    "display_duration": {
+      "type": "integer",
+      "default": 30,
+      "minimum": 5,
+      "maximum": 300,
+      "description": "How long to display each weather mode in seconds"
+    },
+    "live_priority": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable live priority takeover when plugin has live content"
+    },
+    "high_performance_transitions": {
+      "type": "boolean",
+      "default": false,
+      "description": "Use high-performance transitions (120 FPS) instead of standard (30 FPS)"
+    },
+    "update_interval": {
+      "type": "integer",
+      "default": 1800,
+      "minimum": 300,
+      "description": "How often to fetch new weather data in seconds (minimum 300 = 5 minutes to respect API rate limits)"
+    },
+    "transition": {
+      "type": "object",
+      "description": "Transition configuration for this plugin",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["redraw", "fade", "slide", "wipe", "dissolve", "pixelate"],
+          "default": "redraw",
+          "description": "Type of transition to use"
+        },
+        "speed": {
+          "type": "integer",
+          "default": 2,
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Transition speed (1=slow, 10=fast)"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable transitions"
+        }
+      },
+      "additionalProperties": false
+    },
     "api_key": {
       "type": "string",
       "default": "YOUR_OPENWEATHERMAP_API_KEY",
-      "description": "OpenWeatherMap API key (required - get one at https://openweathermap.org/api)",
+      "description": "OpenWeatherMap API key (required - get one at https://openweathermap.org/api). Store in config_secrets.json for security.",
       "title": "API Key",
       "x-secret": true
     },
@@ -18,33 +73,26 @@
     "location_state": {
       "type": "string",
       "default": "Texas",
-      "description": "State or province name (optional but recommended for US cities)",
+      "description": "State or province name (optional but recommended for US cities to avoid ambiguity)",
       "title": "State/Province"
     },
     "location_country": {
       "type": "string",
       "default": "US",
-      "description": "Country code (e.g., US, GB, CA, FR)",
+      "description": "Country code (e.g., US, GB, CA, FR). Use ISO 3166-1 alpha-2 codes.",
       "title": "Country Code"
     },
     "units": {
       "type": "string",
       "enum": ["imperial", "metric"],
       "default": "imperial",
-      "description": "Temperature units (imperial = Fahrenheit, metric = Celsius)",
+      "description": "Temperature units: 'imperial' = Fahrenheit, 'metric' = Celsius",
       "title": "Temperature Units"
-    },
-    "update_interval": {
-      "type": "integer",
-      "default": 1800,
-      "minimum": 300,
-      "description": "How often to fetch new weather data in seconds (minimum 300 = 5 minutes to respect API rate limits)",
-      "title": "Update Interval (seconds)"
     },
     "display_format": {
       "type": "string",
       "default": "{temp}°F\n{condition}",
-      "description": "Display format for current weather. Supports: {temp}, {condition}, {humidity}, {wind}",
+      "description": "Display format for current weather. Supports placeholders: {temp}, {condition}, {humidity}, {wind}",
       "title": "Display Format"
     },
     "show_current_weather": {
@@ -64,17 +112,8 @@
       "default": true,
       "description": "Show daily forecast for the next 3-7 days",
       "title": "Show Daily Forecast"
-    },
-    "display_duration": {
-      "type": "integer",
-      "default": 30,
-      "minimum": 5,
-      "maximum": 300,
-      "description": "How long to display each weather mode in seconds",
-      "title": "Display Duration (seconds)"
     }
   },
-  "required": ["api_key", "location_city", "location_country"],
+  "required": ["enabled", "api_key", "location_city", "location_country"],
   "additionalProperties": false
 }
-
