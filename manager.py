@@ -259,9 +259,9 @@ class WeatherPlugin(BasePlugin):
     
     def _fetch_weather(self) -> None:
         """Fetch weather data from OpenWeatherMap API."""
-        # Check cache first
+        # Check cache first - use update_interval as max_age to respect configured refresh rate
         cache_key = 'weather'
-        cached_data = self.cache_manager.get(cache_key)
+        cached_data = self.cache_manager.get(cache_key, max_age=self.update_interval)
         if cached_data:
             self.weather_data = cached_data.get('current')
             self.forecast_data = cached_data.get('forecast')
