@@ -337,8 +337,21 @@ class WeatherPlugin(BasePlugin):
         if not forecast_data:
             return
 
-        # Process hourly forecast (next 5 hours)
-        hourly_list = forecast_data.get('hourly', [])[:5]
+        # Process hourly forecast (next 5 hours, excluding current hour)
+        hourly_list = forecast_data.get('hourly', [])
+        
+        # Filter out the current hour - get current timestamp rounded down to the hour
+        current_time = time.time()
+        current_hour_timestamp = int(current_time // 3600) * 3600  # Round down to nearest hour
+        
+        # Filter out entries that are in the current hour or past
+        future_hourly = [
+            hour_data for hour_data in hourly_list
+            if hour_data.get('dt', 0) > current_hour_timestamp
+        ]
+        
+        # Get next 5 hours
+        hourly_list = future_hourly[:5]
         self.hourly_forecast = []
         
         for hour_data in hourly_list:
