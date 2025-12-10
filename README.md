@@ -2,6 +2,20 @@
 
 Comprehensive weather display plugin for LEDMatrix showing current conditions, hourly forecast, and daily forecast.
 
+Current Weather:
+
+<img width="768" height="192" alt="led_matrix_1765383629754" src="https://github.com/user-attachments/assets/346817dc-3ff1-4491-a5ad-e70747acf6d0" />
+
+Hourly Forecast:
+
+<img width="768" height="192" alt="led_matrix_1765383660051" src="https://github.com/user-attachments/assets/60533757-c22c-4654-a59c-6efa682eed3f" />
+
+Daily Forecast:
+
+<img width="768" height="192" alt="led_matrix_1765383688610" src="https://github.com/user-attachments/assets/6ed20a08-ebf0-482e-8ce9-60391fd064f3" />
+
+
+
 ## Features
 
 - **Current Weather**: Temperature, conditions, humidity, wind speed
@@ -23,32 +37,11 @@ Comprehensive weather display plugin for LEDMatrix showing current conditions, h
 ### API Key
 
 Get a free API key from [OpenWeatherMap](https://openweathermap.org/api):
-1. Sign up for a free account
+1. Sign up for an account
 2. Navigate to API Keys section
 3. Generate a new API key
 4. Add it to your plugin configuration
 
-### Example Configuration
-
-```json
-{
-  "enabled": true,
-  "api_key": "your_openweathermap_api_key_here",
-  "location": {
-    "city": "Dallas",
-    "state": "Texas",
-    "country": "US"
-  },
-  "units": "imperial",
-  "update_interval": 1800,
-  "display_modes": {
-    "weather": true,
-    "hourly_forecast": true,
-    "daily_forecast": true
-  },
-  "display_duration": 30
-}
-```
 
 ### Configuration Options
 
