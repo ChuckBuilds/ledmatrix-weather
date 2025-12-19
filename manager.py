@@ -163,8 +163,11 @@ class WeatherPlugin(BasePlugin):
             'uv_extreme': (150, 0, 200)
         }
         
-        # Weather icons path
-        self.icons_dir = Path('assets/weather')
+        # Resolve project root path (plugin_dir -> plugins -> project_root)
+        self.project_root = Path(__file__).resolve().parent.parent.parent
+        
+        # Weather icons path (Note: WeatherIcons class resolves paths itself, this is just for reference)
+        self.icons_dir = self.project_root / 'assets' / 'weather'
         
         # Register fonts
         self._register_fonts()
@@ -474,7 +477,9 @@ class WeatherPlugin(BasePlugin):
         # Simple text display
         from PIL import ImageFont
         try:
-            font = ImageFont.truetype('assets/fonts/4x6-font.ttf', 8)
+            # Resolve font path relative to project root
+            font_path = self.project_root / 'assets' / 'fonts' / '4x6-font.ttf'
+            font = ImageFont.truetype(str(font_path), 8)
         except:
             font = ImageFont.load_default()
         
