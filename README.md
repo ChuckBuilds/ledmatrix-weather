@@ -49,7 +49,7 @@ Daily Forecast:
 
 ### API Key
 
-Get a free API key from [OpenWeatherMap](https://openweathermap.org/api):
+Get a free 1000 Daily API Calls on their pay as you go plan (requires CC but won't charge) via their One Call API Key from [OpenWeatherMap](https://openweathermap.org/api):
 1. Sign up for an account
 2. Navigate to API Keys section
 3. Generate a new API key
