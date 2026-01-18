@@ -16,11 +16,6 @@
       "maximum": 300,
       "description": "How long to display each weather mode in seconds"
     },
-    "live_priority": {
-      "type": "boolean",
-      "default": false,
-      "description": "Enable live priority takeover when plugin has live content"
-    },
     "update_interval": {
       "type": "integer",
       "default": 1800,
@@ -54,14 +49,17 @@
     },
     "units": {
       "type": "string",
-      "enum": ["imperial", "metric"],
+      "enum": [
+        "imperial",
+        "metric"
+      ],
       "default": "imperial",
       "description": "Temperature units: 'imperial' = Fahrenheit, 'metric' = Celsius",
       "title": "Temperature Units"
     },
     "display_format": {
       "type": "string",
-      "default": "{temp}°F\n{condition}",
+      "default": "{temp}\u00b0F\n{condition}",
       "description": "Display format for current weather. Supports placeholders: {temp}, {condition}, {humidity}, {wind}",
       "title": "Display Format"
     },
@@ -84,6 +82,11 @@
       "title": "Show Daily Forecast"
     }
   },
-  "required": ["enabled", "api_key", "location_city", "location_country"],
+  "required": [
+    "enabled",
+    "api_key",
+    "location_city",
+    "location_country"
+  ],
   "additionalProperties": false
 }
